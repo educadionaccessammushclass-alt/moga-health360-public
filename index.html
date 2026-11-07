@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#083d91">
+<title>MOGA HEALTH360</title>
+
+<style>
+:root {
+  --navy:#083d91;
+  --deep:#052653;
+  --green:#00a884;
+  --gold:#d4af37;
+  --cream:#fff9ef;
+  --white:#ffffff;
+  --ink:#172b4d;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --red:#b42318;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f3f6fb;
+  color:var(--ink);
+}
+header {
+  background:linear-gradient(120deg,var(--deep),var(--navy));
+  color:white;
+  padding:22px 18px;
+  border-bottom:4px solid var(--gold);
+}
+header h1 { margin:0; font-size:25px; letter-spacing:.5px; }
+header p { margin:7px 0 0; font-size:13px; opacity:.9; }
+header small { display:block; margin-top:12px; color:#e8d89c; }
+nav {
+  display:flex;
+  gap:7px;
+  padding:12px;
+  background:white;
+  overflow-x:auto;
+  border-bottom:1px solid var(--line);
+}
+nav button {
+  border:0;
+  background:#edf2f8;
+  color:var(--deep);
+  padding:11px 14px;
+  border-radius:7px;
+  white-space:nowrap;
+  font-weight:700;
+}
+nav button.active { background:var(--navy); color:white; }
+main { padding:16px; max-width:1100px; margin:auto; }
+.page { display:none; }
+.page.active { display:block; }
+h2 { color:var(--deep); margin-top:5px; }
+.card {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:17px;
+  margin-bottom:14px;
+  box-shadow:0 2px 7px rgba(20,40,70,.04);
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:12px;
+}
+.stat strong { display:block; font-size:27px; color:var(--navy); }
+.stat span { color:var(--muted); font-size:13px; }
+label {
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin:13px 0 5px;
+}
+input,select,textarea {
+  width:100%;
+  padding:12px;
+  border:1px solid #cbd5e1;
+  border-radius:7px;
+  font:inherit;
+  background:white;
+}
+textarea { min-height:85px; resize:vertical; }
+button.primary {
+  background:var(--navy);
+  color:white;
+  border:0;
+  border-radius:7px;
+  padding:12px 17px;
+  margin-top:15px;
+  font-weight:700;
+}
+button.secondary {
+  background:#eaf1fb;
+  color:var(--deep);
+  border:1px solid #cbd5e1;
+  border-radius:7px;
+  padding:10px 13px;
+  font-weight:700;
+}
+button.danger {
+  background:#fff0ef;
+  color:var(--red);
+  border:1px solid #f3c5c1;
+  border-radius:7px;
+  padding:9px 12px;
+}
+.notice {
+  padding:12px;
+  border-left:4px solid var(--gold);
+  background:var(--cream);
+  border-radius:5px;
+  font-size:13px;
+  line-height:1.5;
+}
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td {
+  text-align:left;
+  padding:11px 8px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+th { color:var(--deep); background:#f6f8fc; }
+.table-wrap { overflow-x:auto; }
+.muted { color:var(--muted); font-size:13px; }
+.message { margin-top:12px; font-size:13px; font-weight:700; }
+footer {
+  text-align:center;
+  padding:22px;
+  color:var(--muted);
+  font-size:12px;
+}
+@media(min-width:700px) {
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>MOGA HEALTH360</h1>
+  <p>School Health &amp; Wellness Command Centre</p>
+  <small>Moga Pre-Primary School</small>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
+  <button onclick="showPage('pupils',this)">Pupil Register</button>
+  <button onclick="showPage('encounters',this)">Medical Encounters</button>
+  <button onclick="showPage('reports',this)">Reports &amp; Data</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="page active">
+  <h2>Health Centre Dashboard</h2>
+  <p class="muted">Live figures calculated from records stored in this browser.</p>
+
+  <div class="grid">
+    <div class="card stat"><strong id="totalPupils">0</strong><span>Registered pupils</span></div>
+    <div class="card stat"><strong id="totalEncounters">0</strong><span>Medical encounters</span></div>
+    <div class="card stat"><strong id="followUps">0</strong><span>Follow-ups required</span></div>
+    <div class="card stat"><strong id="todayVisits">0</strong><span>Today's encounters</span></div>
+  </div>
+
+  <div class="card">
+    <h3>System overview</h3>
+    <p>This application records pupil registration and school health encounters. Dashboard figures update when records are saved.</p>
+    <div class="notice">
+      <strong>Clinical governance:</strong> Record observations and screening findings accurately. A diagnosis must only be entered when made by an appropriately qualified clinician. Emergency care must never be delayed by data entry.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Recent medical encounters</h3>
+    <div id="recentEncounters" class="muted">No encounters recorded.</div>
+  </div>
+</section>
+
+<section id="pupils" class="page">
+  <h2>Pupil Registration</h2>
+  <div class="card">
+    <form id="pupilForm">
+      <div class="two-col">
+        <div>
+          <label for="pupilName">Pupil's full name *</label>
+          <input id="pupilName" required>
+        </div>
+        <div>
+          <label for="admissionNo">Admission number *</label>
+          <input id="admissionNo" required>
+        </div>
+        <div>
+          <label for="dob">Date of birth</label>
+          <input id="dob" type="date">
+        </div>
+        <div>
+          <label for="className">Class / level</label>
+          <input id="className" placeholder="e.g. Pre-Primary 2">
+        </div>
+        <div>
+          <label for="guardianName">Parent / guardian name</label>
+          <input id="guardianName">
+        </div>
+        <div>
+          <label for="guardianPhone">Parent / guardian telephone</label>
+          <input id="guardianPhone" type="tel">
+        </div>
+      </div>
+
+      <label for="medicalHistory">Relevant medical history</label>
+      <textarea id="medicalHistory" placeholder="Record information supplied by the parent or guardian."></textarea>
+
+      <label for="allergies">Known allergies</label>
+      <textarea id="allergies"></textarea>
+
+      <label for="conditions">Known medical conditions</label>
+      <textarea id="conditions"></textarea>
+
+      <label for="medicines">Current medicines reported</label>
+      <textarea id="medicines"></textarea>
+
+      <button class="primary" type="submit">Save Pupil Record</button>
+      <div id="pupilMessage" class="message" role="status"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Registered pupils</h3>
+    <input id="pupilSearch" placeholder="Search by name or admission number" oninput="renderPupils()">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Admission No.</th><th>Class</th><th>Record</th></tr></thead>
+        <tbody id="pupilTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="encounters" class="page">
+  <h2>Medical Encounter Register</h2>
+  <div class="card">
+    <form id="encounterForm">
+      <label for="encounterPupil">Select pupil *</label>
+      <select id="encounterPupil" required>
+        <option value="">Register a pupil first</option>
+      </select>
+
+      <div class="two-col">
+        <div>
+          <label for="encounterDate">Date *</label>
+          <input id="encounterDate" type="date" required>
+        </div>
+        <div>
+          <label for="encounterTime">Time</label>
+          <input id="encounterTime" type="time">
+        </div>
+      </div>
+
+      <label for="reason">Reason for visit *</label>
+      <textarea id="reason" required placeholder="Reason reported by pupil, teacher or guardian."></textarea>
+
+      <label for="symptoms">Reported symptoms</label>
+      <textarea id="symptoms"></textarea>
+
+      <label for="observations">Health observations / screening findings</label>
+      <textarea id="observations" placeholder="Record objective observations. Do not enter an unqualified diagnosis."></textarea>
+
+      <label for="actionTaken">Action taken</label>
+      <textarea id="actionTaken" placeholder="First aid, authorised care, advice or other action."></textarea>
+
+      <label for="disposition">Outcome / disposition</label>
+      <select id="disposition">
+        <option value="Returned to class">Returned to class</option>
+        <option value="Guardian contacted">Guardian contacted</option>
+        <option value="Sent home">Sent home</option>
+        <option value="Referred for clinical assessment">Referred for clinical assessment</option>
+        <option value="Emergency response">Emergency response</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="followUp">Follow-up status</label>
+      <select id="followUp">
+        <option value="Not required">Not required</option>
+        <option value="Required">Required</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <label for="encounterNotes">Additional notes</label>
+      <textarea id="encounterNotes"></textarea>
+
+      <button class="primary" type="submit">Save Medical Encounter</button>
+      <div id="encounterMessage" class="message" role="status"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Encounter history</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Pupil</th><th>Reason</th><th>Outcome</th><th>Follow-up</th></tr></thead>
+        <tbody id="encounterTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="reports" class="page">
+  <h2>Reports &amp; Data Management</h2>
+
+  <div class="card">
+    <h3>Data backup</h3>
+    <p>Export a copy of the records stored in this browser. Keep backup files in a secure location.</p>
+    <button class="primary" onclick="exportData()">Export Database Backup</button>
+    <p class="muted">The exported file contains pupil and encounter information. Treat it as confidential.</p>
+  </div>
+
+  <div class="card">
+    <h3>Restore a backup</h3>
+    <p class="muted">Import a previously exported MOGA HEALTH360 JSON backup.</p>
+    <input type="file" id="importFile" accept=".json,application/json">
+    <button class="secondary" onclick="importData()">Import Backup</button>
+    <div id="dataMessage" class="message" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Data protection and operational status</h3>
+    <ul>
+      <li>Records are stored in this browser on this device.</li>
+      <li>This first version does not provide user accounts or role-based access controls.</li>
+      <li>Do not enter real pupil health information until the production security controls are implemented and tested.</li>
+      <li>Use synthetic records for demonstration and testing.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  MOGA HEALTH360 · Moga Pre-Primary School<br>
+  Developed by AAMush Technologies
+</footer>
+
+<script>
+const DB_NAME = "MogaHealth360DB";
+const DB_VERSION = 1;
+let db;
+
+function openDatabase() {
+  return new Promise((resolve,reject) => {
+    const request = indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded = event => {
+      const database = event.target.result;
+
+      if (!database.objectStoreNames.contains("pupils")) {
+        const pupils = database.createObjectStore("pupils",{keyPath:"id",autoIncrement:true});
+        pupils.createIndex("admissionNo","admissionNo",{unique:true});
+        pupils.createIndex("name","name",{unique:false});
+      }
+
+      if (!database.objectStoreNames.contains("encounters")) {
+        const encounters = database.createObjectStore("encounters",{keyPath:"id",autoIncrement:true});
+        encounters.createIndex("pupilId","pupilId",{unique:false});
+        encounters.createIndex("date","date",{unique:false});
+      }
+    };
+
+    request.onsuccess = () => {
+      db = request.result;
+      resolve(db);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function saveRecord(storeName,record) {
+  return new Promise((resolve,reject) => {
+    const transaction = db.transaction(storeName,"readwrite");
+    const request = transaction.objectStore(storeName).add(record);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function getAll(storeName) {
+  return new Promise((resolve,reject) => {
+    const request = db.transaction(storeName,"readonly")
+      .objectStore(storeName).getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function showPage(page,button) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  button.classList.add("active");
+  refresh();
+}
+
+async function refresh() {
+  if (!db) return;
+
+  const pupils = await getAll("pupils");
+  const encounters = await getAll("encounters");
+
+  document.getElementById("totalPupils").textContent = pupils.length;
+  document.getElementById("totalEncounters").textContent = encounters.length;
+  document.getElementById("followUps").textContent =
+    encounters.filter(e => e.followUp === "Required").length;
+
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById("todayVisits").textContent =
+    encounters.filter(e => e.date === today).length;
+
+  renderPupils();
+  renderEncounters();
+  populatePupilSelect(pupils);
+
+  const recent = [...encounters].sort((a,b) =>
+    (b.date || "").localeCompare(a.date || "")
+  ).slice(0,5);
+
+  document.getElementById("recentEncounters").innerHTML =
+    recent.length
+      ? recent.map(e => `<p><strong>${escapeHTML(e.pupilName)}</strong> — ${escapeHTML(e.date)}: ${escapeHTML(e.reason)}</p>`).join("")
+      : "No encounters recorded.";
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[char]);
+}
+
+async function renderPupils() {
+  if (!db) return;
+  const pupils = await getAll("pupils");
+  const search = (document.getElementById("pupilSearch")?.value || "").toLowerCase();
+
+  const filtered = pupils.filter(p =>
+    p.name.toLowerCase().includes(search) ||
+    p.admissionNo.toLowerCase().includes(search)
+  );
+
+  document.getElementById("pupilTable").innerHTML =
+    filtered.map(p => `
+      <tr>
+        <td>${escapeHTML(p.name)}</td>
+        <td>${escapeHTML(p.admissionNo)}</td>
+        <td>${escapeHTML(p.className)}</td>
+        <td>Registered</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4">No matching pupil records.</td></tr>`;
+}
+
+async function populatePupilSelect(pupils) {
+  const select = document.getElementById("encounterPupil");
+  const current = select.value;
+
+  select.innerHTML = `<option value="">Select a pupil</option>` +
+    pupils.map(p =>
+      `<option value="${p.id}">${escapeHTML(p.name)} — ${escapeHTML(p.admissionNo)}</option>`
+    ).join("");
+
+  if (current) select.value = current;
+}
+
+async function renderEncounters() {
+  if (!db) return;
+  const encounters = await getAll("encounters");
+  encounters.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+
+  document.getElementById("encounterTable").innerHTML =
+    encounters.map(e => `
+      <tr>
+        <td>${escapeHTML(e.date)}</td>
+        <td>${escapeHTML(e.pupilName)}</td>
+        <td>${escapeHTML(e.reason)}</td>
+        <td>${escapeHTML(e.disposition)}</td>
+        <td>${escapeHTML(e.followUp)}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="5">No encounters recorded.</td></tr>`;
+}
+
+document.getElementById("pupilForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const record = {
+    name:document.getElementById("pupilName").value.trim(),
+    admissionNo:document.getElementById("admissionNo").value.trim(),
+    dob:document.getElementById("dob").value,
+    className:document.getElementById("className").value.trim(),
+    guardianName:document.getElementById("guardianName").value.trim(),
+    guardianPhone:document.getElementById("guardianPhone").value.trim(),
+    medicalHistory:document.getElementById("medicalHistory").value.trim(),
+    allergies:document.getElementById("allergies").value.trim(),
+    conditions:document.getElementById("conditions").value.trim(),
+    medicines:document.getElementById("medicines").value.trim(),
+    createdAt:new Date().toISOString()
+  };
+
+  try {
+    await saveRecord("pupils",record);
+    document.getElementById("pupilMessage").textContent = "Pupil record saved.";
+    event.target.reset();
+    await refresh();
+  } catch(error) {
+    document.getElementById("pupilMessage").textContent =
+      error.name === "ConstraintError"
+        ? "That admission number is already registered."
+        : "Unable to save the record. Please try again.";
+  }
+});
+
+document.getElementById("encounterForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const pupilId = Number(document.getElementById("encounterPupil").value);
+  const pupils = await getAll("pupils");
+  const pupil = pupils.find(p => p.id === pupilId);
+
+  if (!pupil) {
+    document.getElementById("encounterMessage").textContent = "Select a registered pupil.";
+    return;
+  }
+
+  const record = {
+    pupilId:pupil.id,
+    pupilName:pupil.name,
+    date:document.getElementById("encounterDate").value,
+    time:document.getElementById("encounterTime").value,
+    reason:document.getElementById("reason").value.trim(),
+    symptoms:document.getElementById("symptoms").value.trim(),
+    observations:document.getElementById("observations").value.trim(),
+    actionTaken:document.getElementById("actionTaken").value.trim(),
+    disposition:document.getElementById("disposition").value,
+    followUp:document.getElementById("followUp").value,
+    notes:document.getElementById("encounterNotes").value.trim(),
+    createdAt:new Date().toISOString()
+  };
+
+  try {
+    await saveRecord("encounters",record);
+    document.getElementById("encounterMessage").textContent = "Medical encounter saved.";
+    event.target.reset();
+    setDefaultDate();
+    await refresh();
+  } catch(error) {
+    document.getElementById("encounterMessage").textContent = "Unable to save encounter.";
+  }
+});
+
+function setDefaultDate() {
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset()*60000)
+    .toISOString().slice(0,10);
+  document.getElementById("encounterDate").value = localDate;
+}
+
+async function exportData() {
+  const pupils = await getAll("pupils");
+  const encounters = await getAll("encounters");
+
+  const backup = {
+    application:"MOGA HEALTH360",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    pupils,
+    encounters
+  };
+
+  const blob = new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "MOGA-HEALTH360-backup.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importData() {
+  const file = document.getElementById("importFile").files[0];
+  const message = document.getElementById("dataMessage");
+
+  if (!file) {
+    message.textContent = "Select a backup file first.";
+    return;
+  }
+
+  try {
+    const backup = JSON.parse(await file.text());
+
+    if (backup.application !== "MOGA HEALTH360" ||
+        !Array.isArray(backup.pupils) ||
+        !Array.isArray(backup.encounters)) {
+      throw new Error("Invalid backup file.");
+    }
+
+    message.textContent = "Backup format verified. Import into a new or empty database only. Automatic merging is not enabled.";
+  } catch(error) {
+    message.textContent = "The selected file is not a valid MOGA HEALTH360 backup.";
+  }
+}
+
+async function startApplication() {
+  try {
+    await openDatabase();
+    setDefaultDate();
+    await refresh();
+  } catch(error) {
+    document.body.innerHTML =
+      "<h2>Database could not be opened</h2><p>Please use a modern browser with IndexedDB enabled.</p>";
+  }
+}
+
+startApplication();
+</script>
+
+</body>
+</html>
